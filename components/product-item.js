@@ -23,12 +23,34 @@ class ProductItem extends HTMLElement {
       let cntr = document.getElementById('cart-count');
       let oldCount = cntr.innerHTML;
       let newCount;
+      let storedCart = localStorage.getItem('cart');
+      
       if (event.target.innerHTML === 'Add to Cart'){
         newCount = (parseInt(oldCount)+1).toString();
         event.target.innerHTML = 'Remove from Cart';
+        if (storedCart === null){
+          let localCart = [];
+          localCart.push(this.shadowRoot.childNodes[1].children[1].innerHTML);
+          localStorage.setItem('cart', JSON.stringify(localCart));
+        } else {
+          let localCart = JSON.parse(storedCart);
+          localCart.push(this.shadowRoot.childNodes[1].children[1].innerHTML);
+          localStorage.setItem('cart', JSON.stringify(localCart));
+        }
+        // console.log(event.target);
+        // console.log(this.shadowRoot.childNodes[1].children[1].innerHTML);
       } else if (event.target.innerHTML === 'Remove from Cart'){
         newCount = (parseInt(oldCount)-1).toString();
         event.target.innerHTML = 'Add to Cart';
+  
+        let localCart = JSON.parse(storedCart);
+        for(let i = 0; i < localCart.length; i++){
+          if (localCart[i]===this.shadowRoot.childNodes[1].children[1].innerHTML){
+            localCart.splice(i, 1);
+          }
+        }
+        localStorage.setItem('cart', JSON.stringify(localCart));
+        
       }
       
       cntr.innerHTML = newCount;
